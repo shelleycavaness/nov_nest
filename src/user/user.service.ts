@@ -57,7 +57,6 @@ export class UserService {
     newUser.username = username;
     newUser.email = email;
     newUser.password = password;
-    newUser.articles = [];
 
     const errors = await validate(newUser);
     if (errors.length > 0) {
@@ -74,7 +73,6 @@ export class UserService {
   async update(id: number, dto: UpdateUserDto): Promise<UserEntity> {
     let toUpdate = await this.userRepository.findOne(id);
     delete toUpdate.password;
-    delete toUpdate.favorites;
 
     let updated = Object.assign(toUpdate, dto);
     return await this.userRepository.save(updated);
@@ -118,7 +116,6 @@ export class UserService {
       id: user.id,
       username: user.username,
       email: user.email,
-      bio: user.bio,
       token: this.generateJWT(user),
       image: user.image
     };
