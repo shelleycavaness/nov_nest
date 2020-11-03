@@ -26,14 +26,8 @@ export class CourseController {
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Get(':id')
 async getAllChallenges(@Param('id') courseId: number): Promise<{}> {
+  //rework the promose with a interface CourseRO object
     const group = await this.courseService.listChallenges(courseId)
-    // const challengeList = {
-    //   // id : challenge.id,
-    //   // title: challenge.title,
-    //   challenges: challenge.challenges
-    // }
-    console.log('this', this)
-    console.log('object====================================', group)
     return group
   }
 
