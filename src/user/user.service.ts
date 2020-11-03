@@ -5,7 +5,7 @@ import { UserEntity } from './user.entity';
 import {CreateUserDto, LoginUserDto, UpdateUserDto} from './dto';
 const jwt = require('jsonwebtoken');
 import { SECRET } from '../config';
-import { UserRO } from './user.interface';
+import { UserRO, UserWithChallengesRO, UserWithChallenges } from './user.interface';
 import { validate } from 'class-validator';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { HttpStatus } from '@nestjs/common';
@@ -122,4 +122,22 @@ export class UserService {
 
     return {user: userRO};
   }
+
+
+  // async userWithChallenges(id: number): Promise<{}> {
+  // async userWithChallenges(id: number): Promise<UserWithChallenges> {
+  // //the  user_courses is missing from the <UserEntity>
+  //   console.log('service id===========', id)
+  //   const userRepository = getRepository(UserEntity)
+  //   const findUserActions = await userRepository.findOne({ 
+  //     relations: ["user_courses"], //from user.entity  -hasActions
+  //     where: { id: id }
+  //   }); 
+  //   console.log('USER_--------------', findUserActions)
+  //   return findUserActions
+  // }
+
+
+
+
 }

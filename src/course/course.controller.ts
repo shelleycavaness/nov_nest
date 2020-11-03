@@ -5,13 +5,13 @@ import { CourseEntity } from './course.entity';
 import { ChallengesRO,CourseData } from './course.interface'
 
 @ApiBearerAuth()
-@ApiTags('player')
+@ApiTags('playing')
 @Controller('playing')
 export class CourseController {
   constructor(private readonly courseService : CourseService) {}
 //************* get all items *******************//
-  @ApiOperation({ summary: 'Get all course' })
-  @ApiResponse({ status: 200, description: 'Return all defi.'})
+  @ApiOperation({ summary: 'Get all courses' })
+  @ApiResponse({ status: 200, description: 'Return all of the groups of challenges.'})
   @ApiResponse({ status: 404, description: 'Not found'})
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @Get()
@@ -21,7 +21,7 @@ export class CourseController {
   }
 
   /**********   get all challenges in a parcours/group************/
-  @ApiOperation({ summary: 'Get all challenges in group' })
+  @ApiOperation({ summary: 'Get all challenges in a group by its id' })
   @ApiResponse({ status: 200, description: 'Return challenges from group.'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Get(':id')
