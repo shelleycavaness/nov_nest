@@ -125,17 +125,17 @@ export class UserService {
 
 
   // async userWithChallenges(id: number): Promise<{}> {
-  // async userWithChallenges(id: number): Promise<UserWithChallenges> {
-  // //the  user_courses is missing from the <UserEntity>
-  //   console.log('service id===========', id)
-  //   const userRepository = getRepository(UserEntity)
-  //   const findUserActions = await userRepository.findOne({ 
-  //     relations: ["user_courses"], //from user.entity  -hasActions
-  //     where: { id: id }
-  //   }); 
-  //   console.log('USER_--------------', findUserActions)
-  //   return findUserActions
-  // }
+  async userWithChallenges(id: number): Promise<UserWithChallenges> {
+  //the  user_courses is missing from the <UserEntity>
+    console.log('service id===========', id)
+    const userRepository = getRepository(UserEntity)
+    const findUserActions = await userRepository.findOne({ 
+      relations: ["user_courses"], //from course.entity  -user_courses
+      where: { id: id }
+    }); 
+    console.log('USER_--------------', findUserActions.user_courses[0])
+    return findUserActions
+  }
 
 
 

@@ -13,5 +13,8 @@ export class CourseEntity {
 
   @OneToMany( type => ChallengeEntity, challenge => challenge.course)
   challenges : ChallengeEntity[];
+
+  // @OneToMany( type => FunFactEntity, funFact => funFact.course)
+  // challenges : FunFactEntity[];
   
 }

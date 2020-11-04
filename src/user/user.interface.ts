@@ -15,11 +15,11 @@ export interface  UserWithChallenges {
   id: number;
   username: string;
   email: string;
-  token: string;
+  // token: string;
   image?: string;
   user_courses : CourseEntity[];
 }
 
 export interface UserWithChallengesRO {
-  // userWithChal: UserWithChallenges;
+  userWithChal: UserWithChallenges;
 }

@@ -1,7 +1,7 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, } from 'typeorm';
 import {CourseEntity} from '../course/course.entity'
 @Entity('challenge')
-export class ChallengeEntity {
+export abstract class ChallengeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
