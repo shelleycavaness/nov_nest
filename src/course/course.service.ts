@@ -11,12 +11,12 @@ export class CourseService{
       private readonly courseRepository: Repository<CourseEntity>,
     // @InjectRepository(UserEntity)
     //   private readonly userRepository: Repository<UserEntity>,
-    ) {}
+  ) {}
 
 
- //************* find all defi *****************//
- async findAll(): Promise<CourseEntity[]> {
-  return await this.courseRepository.find();
+  //************* find all defi *****************//
+  async findAll(): Promise<CourseEntity[]> {
+    return await this.courseRepository.find();
   }
 
   async listChallenges(id: number): Promise<ChallengesRO> {
@@ -29,9 +29,5 @@ export class CourseService{
     console.log('USER_--------------', findChallenges)
     return findChallenges
   }
-
-
-
-
-  
+ 
 }

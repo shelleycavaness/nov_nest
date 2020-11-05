@@ -5,17 +5,20 @@ import { UserEntity } from './user.entity';
 import {CreateUserDto, LoginUserDto, UpdateUserDto} from './dto';
 const jwt = require('jsonwebtoken');
 import { SECRET } from '../config';
-import { UserRO, UserWithChallengesRO, UserWithChallenges } from './user.interface';
+import { UserRO, UserWithCourses } from './user.interface';
 import { validate } from 'class-validator';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { HttpStatus } from '@nestjs/common';
 import * as argon2 from 'argon2';
+import { CourseEntity } from '../course/course.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserEntity)
+    private readonly courseRepository: Repository<CourseEntity>
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -125,18 +128,37 @@ export class UserService {
 
 
   // async userWithChallenges(id: number): Promise<{}> {
-  async userWithChallenges(id: number): Promise<UserWithChallenges> {
+  async userWithCourses(id: number): Promise<UserWithCourses> {
   //the  user_courses is missing from the <UserEntity>
     console.log('service id===========', id)
     const userRepository = getRepository(UserEntity)
     const findUserActions = await userRepository.findOne({ 
-      relations: ["user_courses"], //from course.entity  -user_courses
+      relations: ["courses"], //from course.entity  -user_courses
       where: { id: id }
     }); 
-    console.log('USER_--------------', findUserActions.user_courses[0])
+    // delete findUserActions.password;
+
+    console.log('USER_--------------', findUserActions.courses[0])
     return findUserActions
   }
+/************ add points to a user accoring to the UpdateUserDto**************/
 
+async updateScore(userId: number, CourseId: number): Promise<UserWithCourses> {
+  //find will return a list and findOne an object
+  const toUpdateUserScore = await this.userRepository.findOne({
+    relations: ["courses"], //from user.entity  -user_courses
+      where: { id :userId }
+  })
+  delete toUpdateUserScore.password;
+
+  const parcours = await this.courseRepository.findOne(CourseId)
+  if (!parcours) {
+    throw Error("parcours is null")
+  }
+  toUpdateUserScore.courses.push(parcours);
+  // toUpdateUserScore.points += action.gamePoints; //adds the points to the user
+  return await this.userRepository.save(toUpdateUserScore);
+ }
 
 
 

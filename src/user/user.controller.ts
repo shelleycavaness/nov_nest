@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagg
 
 import { Request } from 'express';
 import { UserService } from './user.service';
-import { UserRO, UserWithChallenges, UserWithChallengesRO } from './user.interface';
+import { UserRO, UserWithCourses  } from './user.interface';
 import { CreateUserDto, UpdateUserDto, LoginUserDto } from './dto';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { User } from './user.decorator';
@@ -58,16 +58,16 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Return users parcours.'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Get('player')
-  async getUserWithChallenges(@User('id') userId: number): Promise<UserWithChallenges> {
+  async getUserWithCourses(@User('id') userId: number): Promise<UserWithCourses> {
 
-    const userWithChal = await this.userService.userWithChallenges(userId)
+    const userWithChal = await this.userService.userWithCourses(userId)
     const userWithoutPwd = {
       id: userWithChal.id,
       username: userWithChal.username,
       email: userWithChal.email,
       image: userWithChal.image,
       // token: userWithChal.token,
-      user_courses: userWithChal.user_courses
+      courses: userWithChal.courses
     }
       return userWithoutPwd
   }

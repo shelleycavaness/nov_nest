@@ -9,7 +9,7 @@ import { ChallengesRO,CourseData } from './course.interface'
 @Controller('playing')
 export class CourseController {
   constructor(private readonly courseService : CourseService) {}
-//************* get all items *******************//
+  /************* get all items *******************/
   @ApiOperation({ summary: 'Get all courses' })
   @ApiResponse({ status: 200, description: 'Return all of the groups of challenges.'})
   @ApiResponse({ status: 404, description: 'Not found'})

@@ -11,15 +11,12 @@ export interface UserRO {
   user: UserData;
 }
 
-export interface  UserWithChallenges {
+export interface  UserWithCourses {
   id: number;
   username: string;
   email: string;
   // token: string;
   image?: string;
-  user_courses : CourseEntity[];
+  courses : CourseEntity[];
 }
 
-export interface UserWithChallengesRO {
-  userWithChal: UserWithChallenges;
-}
