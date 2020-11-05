@@ -5,7 +5,7 @@ import { UserEntity } from './user.entity';
 import {CreateUserDto, LoginUserDto, UpdateUserDto} from './dto';
 const jwt = require('jsonwebtoken');
 import { SECRET } from '../config';
-import { UserRO } from './user.interface';
+import { UserRO, UserWithChallengesRO, UserWithChallenges } from './user.interface';
 import { validate } from 'class-validator';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { HttpStatus } from '@nestjs/common';
@@ -57,7 +57,6 @@ export class UserService {
     newUser.username = username;
     newUser.email = email;
     newUser.password = password;
-    newUser.articles = [];
 
     const errors = await validate(newUser);
     if (errors.length > 0) {
@@ -74,7 +73,6 @@ export class UserService {
   async update(id: number, dto: UpdateUserDto): Promise<UserEntity> {
     let toUpdate = await this.userRepository.findOne(id);
     delete toUpdate.password;
-    delete toUpdate.favorites;
 
     let updated = Object.assign(toUpdate, dto);
     return await this.userRepository.save(updated);
@@ -118,11 +116,28 @@ export class UserService {
       id: user.id,
       username: user.username,
       email: user.email,
-      bio: user.bio,
       token: this.generateJWT(user),
       image: user.image
     };
 
     return {user: userRO};
   }
+
+
+  // async userWithChallenges(id: number): Promise<{}> {
+  async userWithChallenges(id: number): Promise<UserWithChallenges> {
+  //the  user_courses is missing from the <UserEntity>
+    console.log('service id===========', id)
+    const userRepository = getRepository(UserEntity)
+    const findUserActions = await userRepository.findOne({ 
+      relations: ["user_courses"], //from course.entity  -user_courses
+      where: { id: id }
+    }); 
+    console.log('USER_--------------', findUserActions.user_courses[0])
+    return findUserActions
+  }
+
+
+
+
 }

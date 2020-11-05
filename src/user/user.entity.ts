@@ -1,7 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToMany} from 'typeorm';
 import { IsEmail } from 'class-validator';
+import {CourseEntity} from '../course/course.entity'
 import * as argon2 from 'argon2';
-import { ArticleEntity } from '../article/article.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -16,8 +16,6 @@ export class UserEntity {
   @IsEmail()
   email: string;
 
-  @Column({default: ''})
-  bio: string;
 
   @Column({default: ''})
   image: string;
@@ -30,10 +28,12 @@ export class UserEntity {
     this.password = await argon2.hash(this.password);
   }
 
-  @ManyToMany(type => ArticleEntity)
+  @ManyToMany(type => CourseEntity)
   @JoinTable()
-  favorites: ArticleEntity[];
+  // @BeforeInsert()
+  // updateDates() {
+  //     this.createdDate = new Date();
+  // }
+  user_courses : CourseEntity[];
 
-  @OneToMany(type => ArticleEntity, article => article.author)
-  articles: ArticleEntity[];
 }

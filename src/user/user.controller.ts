@@ -1,15 +1,14 @@
 import { Get, Post, Body, Put, Delete, Param, Controller, UsePipes } from '@nestjs/common';
+import { ApiBearerAuth, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { Request } from 'express';
 import { UserService } from './user.service';
-import { UserRO } from './user.interface';
+import { UserRO, UserWithChallenges, UserWithChallengesRO } from './user.interface';
 import { CreateUserDto, UpdateUserDto, LoginUserDto } from './dto';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { User } from './user.decorator';
 import { ValidationPipe } from '../shared/pipes/validation.pipe';
-
-import {
-  ApiBearerAuth, ApiTags
-} from '@nestjs/swagger';
+import { UserEntity } from './user.entity';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -48,8 +47,33 @@ export class UserController {
     if (!_user) throw new HttpException({errors}, 401);
 
     const token = await this.userService.generateJWT(_user);
-    const {email, username, bio, image} = _user;
-    const user = {email, token, username, bio, image};
+    const {email, username, image} = _user;
+    const user = {email, token, username,  image};
     return {user}
   }
+
+  /***  get with a jwt to identify the user's courses http://localhost:3000/api/player *****/
+  /** creaded a userWithActions interface, and added hasAcions list,   **/
+  @ApiOperation({ summary: 'Get challenges from a user' })
+  @ApiResponse({ status: 200, description: 'Return users parcours.'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
+  @Get('player')
+  async getUserWithChallenges(@User('id') userId: number): Promise<UserWithChallenges> {
+
+    const userWithChal = await this.userService.userWithChallenges(userId)
+    const userWithoutPwd = {
+      id: userWithChal.id,
+      username: userWithChal.username,
+      email: userWithChal.email,
+      image: userWithChal.image,
+      // token: userWithChal.token,
+      user_courses: userWithChal.user_courses
+    }
+      return userWithoutPwd
+  }
+
+
+
+
+
 }

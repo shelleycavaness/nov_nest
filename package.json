@@ -1,7 +1,7 @@
 {
-  "name": "nestjs-realworld-example-app",
+  "name": "ecoChallenge-app",
   "version": "2.0.0",
-  "description": "[![Build Status](https://travis-ci.org/anishkny/node-express-realworld-example-app.svg?branch=master)](https://travis-ci.org/anishkny/node-express-realworld-example-app)",
+  "description": "eco-challenge-app",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lujakob/nestjs-realworld-example-app.git"
+    "url": "git+https://github.com/git@github.com:shelleycavaness/nov_nest.git"
   },
-  "author": "lu.jakob@googlemail.com",
+  "author": "https://github.com/git@github.com:shelleycavaness/nov_nest.git",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lujakob/nestjs-realworld-example-app/issues"
+    "url": "https://github.com/git@github.com:shelleycavaness/nov_nest.git"
   },
-  "homepage": "https://github.com/lujakob/nestjs-realworld-example-app#readme",
+  "homepage": "",
   "dependencies": {
     "@nestjs/common": "^7.0.5",
     "@nestjs/core": "^7.0.5",
