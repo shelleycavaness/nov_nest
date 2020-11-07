@@ -12,7 +12,9 @@ export class CourseService{
     @InjectRepository(CourseTemplateEntity)
       // private readonly courseRepository: Repository<CourseEntity>,
       private readonly courseTempleteRepository: Repository<CourseTemplateEntity>,
-
+      // @InjectRepository(ChallengeTemplateEntity)
+      // private readonly courseRepository: Repository<CourseEntity>,
+      // private readonly challengeTempleteRepository: Repository<ChallengeTemplateEntity>,
     // @InjectRepository(UserEntity)
     //   private readonly userRepository: Repository<UserEntity>,
   ) {}
@@ -25,14 +27,32 @@ export class CourseService{
   }
 
   async findCourseById(id: number): Promise<{}> {
-    console.log('service id===========', id)
     const courseRepository = getRepository(CourseTemplateEntity)
     const findChallenges = await courseRepository.findOne({ 
       relations: ["challengeTemplates"], //from user.entity  -hasActions
       where: { id: id }
     }); 
-    console.log('USER_--------------', findChallenges)
+    // console.log('USER_--------------', findChallenges)
     return findChallenges
   }
+  async listAllChallengesFromCourseId(id: number): Promise<{}> {
+    const courseRepository = getRepository(CourseTemplateEntity)
+    const findChallenges = await courseRepository.findOne({ 
+      relations: ["challengeTemplates"], //from user.entity  -hasActions
+      where: { id: id }
+    }); 
+    return findChallenges.challengeTemplates //returns an array of challenges
+  }
+
+  async findChallengeById( courseTemplateId: number, challengeTemplateId: number){
+    const courseRepository = getRepository(CourseTemplateEntity)
+    const findCourse = await courseRepository.findOne({ 
+      relations: ["challengeTemplates"], 
+      where: { id: courseTemplateId }
+    }); 
+    console.log('number2222222222222222222222222222222',  findCourse.challengeTemplates[challengeTemplateId -1])
+    return findCourse.challengeTemplates[challengeTemplateId -1]
+  }
+
  
 }

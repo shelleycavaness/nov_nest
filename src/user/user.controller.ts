@@ -79,7 +79,8 @@ export class UserController {
     return this.userService.addCourse(userId, courseTemplateId)
   }
 
+
   /************ User Completes Challenge  **************/
-  
+
 
 }
