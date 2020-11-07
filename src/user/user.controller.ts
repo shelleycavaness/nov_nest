@@ -37,7 +37,7 @@ export class UserController {
   async delete(@Param() params) {
     return await this.userService.delete(params.slug);
   }
-
+  /***  login user  http://localhost:3000/api/users/login *****/
   @UsePipes(new ValidationPipe())
   @Post('users/login')
   async login(@Body('user') loginUserDto: LoginUserDto): Promise<UserRO> {
@@ -52,28 +52,34 @@ export class UserController {
     return {user}
   }
 
-  /***  get with a jwt to identify the user's courses http://localhost:3000/api/player *****/
-  /** creaded a userWithActions interface, and added hasAcions list,   **/
-  @ApiOperation({ summary: 'Get challenges from a user' })
+  /*** get all courses associated with a user, use jwt to identify the user  *****/
+  /** http://localhost:3000/api/player  **/
+  @ApiOperation({ summary: 'Get course from a user' })
   @ApiResponse({ status: 200, description: 'Return users parcours.'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Get('player')
   async getUserWithCourses(@User('id') userId: number): Promise<UserWithCourses> {
-
     const userWithChal = await this.userService.userWithCourses(userId)
     const userWithoutPwd = {
       id: userWithChal.id,
       username: userWithChal.username,
       email: userWithChal.email,
       image: userWithChal.image,
-      // token: userWithChal.token,
       courses: userWithChal.courses
-    }
-      return userWithoutPwd
+    } 
+    return userWithoutPwd
   }
 
+  /************ add Course to a user **************/
+  @ApiOperation({ summary: 'Add a course to a user' })
+  @ApiResponse({ status: 200, description: 'course added to user'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })  
+  @Put('user/:userId/course/:courseTemplateId/add')
+  async addCourse(@Param('userId') userId: number, @Param('courseTemplateId') courseTemplateId: number): Promise<UserWithCourses> {
+    return this.userService.addCourse(userId, courseTemplateId)
+  }
 
-
-
+  /************ User Completes Challenge  **************/
+  
 
 }

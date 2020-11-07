@@ -16,6 +16,7 @@ export interface  UserWithCourses {
   username: string;
   email: string;
   // token: string;
+  // password: string;
   image?: string;
   courses : CourseEntity[];
 }

@@ -1,9 +1,10 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, OneToOne, JoinColumn} from 'typeorm';
 import {CourseEntity} from '../course/course.entity'
-import { RewardEntity } from '../reward/reward.entity';
+import { RewardEntity } from '../reward/reward.entity'
+import { ChallengeTemplateEntity } from './challengeTemplate.entity'
 
 @Entity('challenge')
-export abstract class ChallengeEntity {
+export class ChallengeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -16,10 +17,10 @@ export abstract class ChallengeEntity {
   @Column({ default: false })
   isCompleted: boolean
 
-  @Column({type:'date'})
+  @Column({type:'date', nullable: true})
   startedOn: Date;
   
-  @Column({type:'date'})
+  @Column({type:'date', nullable: true})
   completedOn: Date;
 
   @ManyToOne(() => CourseEntity, course => course.challenges)
@@ -28,5 +29,13 @@ export abstract class ChallengeEntity {
   @OneToOne(() => RewardEntity)
   @JoinColumn()
   reward: RewardEntity;
+  
+  // custom contructor to fix array in userService
+  // constructor(params: ChallengeTemplateEntity) {
+  //   this.title = params.title
+  //   this.description = params.description
+  //   this.reward = params.reward
+  //   this.isCompleted = false
+  // }
 
 }
