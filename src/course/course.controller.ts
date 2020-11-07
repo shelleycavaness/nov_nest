@@ -2,7 +2,8 @@ import { Controller, Get, Param } from "@nestjs/common";
 import { ApiBearerAuth, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CourseService } from "./course.service";
 import { CourseEntity } from './course.entity';
-import { ChallengesRO,CourseData } from './course.interface'
+import {CourseTemplateEntity} from './courseTemplate.entity';
+import { ChallengesRO,CourseData } from './course.interface';
 
 @ApiBearerAuth()
 @ApiTags('playing')
@@ -15,8 +16,7 @@ export class CourseController {
   @ApiResponse({ status: 404, description: 'Not found'})
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @Get()
-  async findAll(): Promise<CourseEntity[]> {
-  
+  async findAll(): Promise<CourseTemplateEntity[]> {
     return await this.courseService.findAll();
   }
 
@@ -27,7 +27,7 @@ export class CourseController {
   @Get(':id')
   async getAllChallenges(@Param('id') courseId: number): Promise<{}> {
   //rework the promose with a interface CourseRO object
-    const group = await this.courseService.listChallenges(courseId)
+    const group = await this.courseService.findCourseById(courseId)
     return group
   }
 

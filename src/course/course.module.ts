@@ -4,13 +4,14 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { CourseEntity } from "./course.entity";
 import { CourseService } from './course.service';
 import {CourseController} from './course.controller';
+import { CourseTemplateEntity } from "./courseTemplate.entity";
 
 
 // import { AuthMiddleware } from './auth.middleware';
 
 
 @Module({
-  imports : [TypeOrmModule.forFeature([CourseEntity, ])],
+  imports : [TypeOrmModule.forFeature([CourseEntity, CourseTemplateEntity ])],
   providers: [CourseService],
   controllers: [CourseController]
 })
