@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToMany, JoinTable} from 'typeorm';
+import {Column, Entity, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable} from 'typeorm';
 import {CourseEntity} from '../course/course.entity'
 import { RewardEntity } from '../reward/reward.entity';
 import {CourseTemplateEntity} from '../course/courseTemplate.entity'
@@ -19,8 +19,7 @@ export abstract class ChallengeTemplateEntity {
   @JoinTable()
   courseTemplates: CourseTemplateEntity[];
   
-  @OneToOne(() => RewardEntity)
-  @JoinColumn()
+  @ManyToOne(() => RewardEntity, reward => reward.challengeTemplates)
   reward: RewardEntity;
 
 }

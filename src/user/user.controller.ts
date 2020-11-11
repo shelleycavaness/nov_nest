@@ -1,14 +1,16 @@
 import { Get, Post, Body, Put, Delete, Param, Controller, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-
 import { Request } from 'express';
 import { UserService } from './user.service';
-import { UserRO, UserWithCourses  } from './user.interface';
+import { UserCourseWithChallenges, UserRO, UserWithCourses  } from './user.interface';
 import { CreateUserDto, UpdateUserDto, LoginUserDto } from './dto';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { User } from './user.decorator';
 import { ValidationPipe } from '../shared/pipes/validation.pipe';
 import { UserEntity } from './user.entity';
+import { ChallengeEntity } from '../challenge/challenge.entity';
+import { CourseEntity } from '../course/course.entity';
+import { ChallengeTemplateEntity } from '../challenge/challengeTemplate.entity';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -58,18 +60,24 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Return users parcours.'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Get('player')
-  async getUserWithCourses(@User('id') userId: number): Promise<UserWithCourses> {
-    const userWithChal = await this.userService.userWithCourses(userId)
+  async getUserWithInfo(@User('id') userId: number): Promise<UserWithCourses> {
+    const userWithChal = await this.userService.userWithInfo(userId)
     const userWithoutPwd = {
       id: userWithChal.id,
       username: userWithChal.username,
       email: userWithChal.email,
       image: userWithChal.image,
+      totalGamePoints: userWithChal.totalGamePoints,
+      totalKw: userWithChal.totalKw,
+      totalH2O: userWithChal.totalH2O,
+      totalCo2: userWithChal.totalCo2,
       courses: userWithChal.courses
     } 
     return userWithoutPwd
   }
 
+  
+  /************ Remember that the token will take preference over the id  **************/
   /************ add Course to a user **************/
   @ApiOperation({ summary: 'Add a course to a user' })
   @ApiResponse({ status: 200, description: 'course added to user'})
@@ -80,7 +88,23 @@ export class UserController {
   }
 
 
-  /************ User Completes Challenge  **************/
+  /************ User Accepts Challenge  **************/
+  @ApiOperation({ summary: 'User Accepts challenge' })
+  @ApiResponse({ status: 200, description: 'challege date updated on challenge table'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })  
+  @Put('user/challenge/:challengeId/accept')
+  async acceptChallenge(@Param('challengeId') challengeId: number): Promise< ChallengeEntity> {
+    return await this.userService.acceptChallenge(challengeId)
+  }
 
+
+  /************ User Completes Challenge  **************/
+  @ApiOperation({ summary: 'User Completes Challenge' })
+  @ApiResponse({ status: 200, description: 'challenge completed by user'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })  
+  @Put('user/challenge/:challengeId/complete')
+  async completeChallenge(@Param('challengeId') challengeId: number): Promise< ChallengeEntity> {
+    return await this.userService.completeChallenge(challengeId)
+  }
 
 }

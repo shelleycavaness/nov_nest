@@ -47,7 +47,9 @@ export class CourseController {
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @Get(':courseTemplateId/course/:challengeTemplateId')
   async getChallengeById(@Param('courseTemplateId') courseTemplateId: number, @Param('challengeTemplateId') challengeTemplateId: number): Promise<{}> {
-    console.log('courseTemplateId', courseTemplateId)
+    console.log('courseTemplateId ----', courseTemplateId)
+    console.log('challengeTemplateId =====', challengeTemplateId)
+
     return await this.courseService.findChallengeById(courseTemplateId, challengeTemplateId);
   }
 

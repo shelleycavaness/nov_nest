@@ -44,15 +44,15 @@ export class CourseService{
     return findChallenges.challengeTemplates //returns an array of challenges
   }
 
+  ///***/       not working well undefined       /***//
   async findChallengeById( courseTemplateId: number, challengeTemplateId: number){
     const courseRepository = getRepository(CourseTemplateEntity)
     const findCourse = await courseRepository.findOne({ 
       relations: ["challengeTemplates"], 
-      where: { id: courseTemplateId }
+      where: { id: courseTemplateId,  }
     }); 
-    console.log('number2222222222222222222222222222222',  findCourse.challengeTemplates[challengeTemplateId -1])
+    console.log('number33333',  findCourse.challengeTemplates)
     return findCourse.challengeTemplates[challengeTemplateId -1]
   }
-
  
 }

@@ -1,5 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm';
 import { ChallengeEntity } from '../challenge/challenge.entity';
+import { ChallengeTemplateEntity } from '../challenge/challengeTemplate.entity';
 
 @Entity('reward')
 export class RewardEntity {
@@ -18,5 +19,10 @@ export class RewardEntity {
   @Column({default: 0})
   gamePoints: number;
 
+  @OneToMany(() => ChallengeEntity, challenge => challenge.reward)
+  challenges: ChallengeEntity[]
+
+  @OneToMany(() => ChallengeTemplateEntity, challengeTemplate => challengeTemplate.reward)
+  challengeTemplates: ChallengeTemplateEntity[]
 
 }

@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, OneToOne, JoinColumn} from 'typeorm';
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn} from 'typeorm';
 import {CourseEntity} from '../course/course.entity'
 import { RewardEntity } from '../reward/reward.entity'
 import { ChallengeTemplateEntity } from './challengeTemplate.entity'
@@ -26,8 +26,7 @@ export class ChallengeEntity {
   @ManyToOne(() => CourseEntity, course => course.challenges)
   course: CourseEntity;
   
-  @OneToOne(() => RewardEntity)
-  @JoinColumn()
+  @ManyToOne(() => RewardEntity, reward => reward.challenges)
   reward: RewardEntity;
   
   // custom contructor to fix array in userService

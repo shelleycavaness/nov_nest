@@ -42,12 +42,12 @@ export class UserEntity {
   }
 
   @Expose()
-  get totalH20(): number {
-    let totalH20 = 0;
+  get totalH2O(): number {
+    let totalH2O = 0;
     this.courses.forEach(course => {
-      totalH20 += course.totalH2O;
+      totalH2O += course.totalH2O;
     });
-    return totalH20;
+    return totalH2O;
   }
 
   @Expose()

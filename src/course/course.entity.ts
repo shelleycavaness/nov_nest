@@ -32,7 +32,9 @@ export class CourseEntity {
   get totalKw(): number {
     let totalKw = 0;
     this.challenges.forEach(challenge => {
-      totalKw += challenge.reward.rewardKw;
+      if (challenge.isCompleted) {
+        totalKw += challenge.reward.rewardKw;
+      }
     });
     return totalKw;
   }
@@ -41,7 +43,9 @@ export class CourseEntity {
   get totalH2O(): number {
     let totalH2O = 0;
     this.challenges.forEach(challenge => {
-      totalH2O += challenge.reward.rewardH2O;
+      if (challenge.isCompleted) {
+        totalH2O += challenge.reward.rewardH2O;
+      }
     });
     return totalH2O;
   }
@@ -50,7 +54,9 @@ export class CourseEntity {
   get totalCo2(): number {
     let totalCo2 = 0;
     this.challenges.forEach(challenge => {
-      totalCo2 += challenge.reward.rewardCo2;
+      if (challenge.isCompleted) {
+        totalCo2 += challenge.reward.rewardCo2;
+      }
     });
     return totalCo2;
   }
@@ -59,7 +65,9 @@ export class CourseEntity {
   get totalGamePoints(): number {
     let totalGamePoints = 0;
     this.challenges.forEach(challenge => {
-      totalGamePoints += challenge.reward.gamePoints;
+      if (challenge.isCompleted) {
+        totalGamePoints += challenge.reward.gamePoints;
+      }
     });
     return totalGamePoints;
   }
