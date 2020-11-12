@@ -1,3 +1,4 @@
+import { ChallengeEntity } from "../challenge/challenge.entity";
 import { CourseEntity } from "../course/course.entity";
 
 export interface UserData {
@@ -11,15 +12,21 @@ export interface UserRO {
   user: UserData;
 }
 
-export interface  UserWithChallenges {
+export interface  UserWithCourses {
   id: number;
   username: string;
   email: string;
   // token: string;
+  totalGamePoints: number;
+  totalKw: number;
+  totalH2O: number;
+  totalCo2: number;
   image?: string;
-  user_courses : CourseEntity[];
+  courses : CourseEntity[];
+}
+export interface  UserCourseWithChallenges {
+  id: number;
+  username: string;
+  courses : ChallengeEntity[];
 }
 
-export interface UserWithChallengesRO {
-  userWithChal: UserWithChallenges;
-}

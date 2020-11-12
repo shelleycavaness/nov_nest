@@ -1,21 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { InjectRepository } from '@nestjs/typeorm';
+import { validate } from 'class-validator';
+const jwt = require('jsonwebtoken');
+import * as argon2 from 'argon2';
+import { SECRET } from '../config';
 import { Repository, getRepository, DeleteResult } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { CourseEntity } from '../course/course.entity';
 import {CreateUserDto, LoginUserDto, UpdateUserDto} from './dto';
-const jwt = require('jsonwebtoken');
-import { SECRET } from '../config';
-import { UserRO, UserWithChallengesRO, UserWithChallenges } from './user.interface';
-import { validate } from 'class-validator';
-import { HttpException } from '@nestjs/common/exceptions/http.exception';
-import { HttpStatus } from '@nestjs/common';
-import * as argon2 from 'argon2';
+import { UserRO, UserWithCourses } from './user.interface';
+
+
+import {CourseTemplateEntity} from '../course/courseTemplate.entity'
+import {ChallengeEntity} from '../challenge/challenge.entity'
+import { ChallengeTemplateEntity } from '../challenge/challengeTemplate.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(CourseEntity)
+    private readonly courseRepository: Repository<CourseEntity>,
+    @InjectRepository(CourseTemplateEntity)
+    private readonly courseTemplateRepository: Repository<CourseTemplateEntity>,
+    @InjectRepository(ChallengeEntity)
+    private readonly challengeRepository: Repository<ChallengeEntity>,
+    @InjectRepository(ChallengeEntity)
+    private readonly challengeTemplateRepository: Repository<ChallengeTemplateEntity>
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -119,25 +132,125 @@ export class UserService {
       token: this.generateJWT(user),
       image: user.image
     };
-
     return {user: userRO};
   }
 
+  /************ get all finished belonging to a user's  **************/
 
-  // async userWithChallenges(id: number): Promise<{}> {
-  async userWithChallenges(id: number): Promise<UserWithChallenges> {
-  //the  user_courses is missing from the <UserEntity>
-    console.log('service id===========', id)
-    const userRepository = getRepository(UserEntity)
-    const findUserActions = await userRepository.findOne({ 
-      relations: ["user_courses"], //from course.entity  -user_courses
-      where: { id: id }
-    }); 
-    console.log('USER_--------------', findUserActions.user_courses[0])
-    return findUserActions
+  async userWithChallenges(id: number) {
   }
 
+  /************ get all courses belonging to a user's  **************/
+  // async userWithCourses(id: number): Promise<UserWithCourses> {
+    async userWithInfo(id: number): Promise<UserWithCourses> {
+    const userRepository = getRepository(UserEntity)
+    const findUserInfo = await userRepository.findOne({ 
+      relations: ["courses", "courses.challenges", "courses.challenges.reward"],
+      where: { id: id }
+    }); 
+    // console.log('USER_--------------', findUserActions)
+    return findUserInfo
+  }
 
+  /************ add course to a user's courses **************/
+  async addCourse(userId: number, courseTemplateId: number): Promise<UserWithCourses> {
+    // 1- Get the user with id
+    const user = await this.userRepository.findOne({
+      relations: ["courses"],
+      where: { id: userId }
+    })
 
+    // 2- Get the courseTemplate with challengeTemplates with id
+    const courseTemplates = await this.courseTemplateRepository.find({
+    relations: ["challengeTemplates", "challengeTemplates.reward"],
+      where: { id: courseTemplateId }
+    })
+    const courseTemplate = courseTemplates[0]
+
+    // TODO: Check if course with same title as courseTemplate is already in user courses
+    // If so raise an exception (ie throw an error that will be caught in the controller)
+
+    // 3- Create a course instance with its challenges from template
+    const course = new CourseEntity()
+    course.title = courseTemplate.title
+    course.isCompleted = false
+    course.challenges = []
+    course.user = user   // adds the user to course
+    // 4- Save the course with user
+    this.courseRepository.save(course)
+
+    // 5- Iterate through all challengTemplates of the courseTemplate
+    courseTemplate.challengeTemplates.forEach(challengeTemplate => {
+      // 5.1- Create a ChallengeEntity instance from the challengeTemplate
+      const newChallenge = new ChallengeEntity()
+      newChallenge.title = challengeTemplate.title
+      newChallenge.description = challengeTemplate.description
+      newChallenge.isCompleted = false
+      newChallenge.reward = challengeTemplate.reward
+      // 5.2- Link the course to the challenge
+      newChallenge.course = course
+      // 5.3- Save the challenge
+      this.challengeRepository.save(newChallenge)
+    });
+
+    // 6- Save User
+    this.userRepository.save(user)
+
+    // 7- return user dto
+    // console.log('user', user)
+    return user
+  }
+
+  // TODO: Remove course from user's course
+  async removeCourse() {
+    // TODO: 1- Get user's course from id
+  // 1- Get the user with id
+  
+    // TODO: 2- Delete course from db
+
+    // TODO: 3- Return course dto
+
+  }
+
+  // Accept Challenge
+  async acceptChallenge(challengeId: number): Promise <ChallengeEntity>{
+    // 1- Get user's challenge from id
+    const challenge = await this.challengeRepository.findOne(challengeId)
+
+    if (!challenge) {
+      throw Error("challenge is null!")
+    }
+    
+    // 2- Set challenge start date to today
+    challenge.startedOn = new Date()
+    
+    // 3- Save
+    this.challengeRepository.save(challenge)
+
+    // 4- Return challenge dto
+    return challenge
+  }
+
+  // Complete Challenge
+  async completeChallenge(challengeId: number): Promise <ChallengeEntity>{
+    // 1- Get user's challenge from id
+    const challenge = await this.challengeRepository.findOne(challengeId)
+
+    if (!challenge) {
+      throw Error("challenge is null!")
+    }
+    
+    // 2- Set challenge end date to today
+    challenge.completedOn = new Date
+    
+    // 3- Set challenge isCompleted to true
+    challenge.isCompleted = true
+
+    // 4- Save
+    this.challengeRepository.save(challenge)
+
+    // 5- Return challenge dto
+    return challenge
+  }
 
 }

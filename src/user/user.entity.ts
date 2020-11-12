@@ -1,4 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, Column, BeforeInsert, JoinTable, ManyToMany, OneToMany} from 'typeorm';
+import { Expose } from 'class-transformer'; //
+
 import { IsEmail } from 'class-validator';
 import {CourseEntity} from '../course/course.entity'
 import * as argon2 from 'argon2';
@@ -16,7 +18,6 @@ export class UserEntity {
   @IsEmail()
   email: string;
 
-
   @Column({default: ''})
   image: string;
 
@@ -28,12 +29,43 @@ export class UserEntity {
     this.password = await argon2.hash(this.password);
   }
 
-  @ManyToMany(type => CourseEntity)
-  @JoinTable()
-  // @BeforeInsert()
-  // updateDates() {
-  //     this.createdDate = new Date();
-  // }
-  user_courses : CourseEntity[];
+  @OneToMany(type => CourseEntity, course => course.user)
+  courses: CourseEntity[]
+
+  @Expose()
+  get totalKw(): number {
+    let totalKw = 0;
+    this.courses.forEach(course => {
+      totalKw += course.totalKw;
+    });
+    return totalKw;
+  }
+
+  @Expose()
+  get totalH2O(): number {
+    let totalH2O = 0;
+    this.courses.forEach(course => {
+      totalH2O += course.totalH2O;
+    });
+    return totalH2O;
+  }
+
+  @Expose()
+  get totalCo2(): number {
+    let totalCo2 = 0;
+    this.courses.forEach(course => {
+      totalCo2 += course.totalCo2
+    });
+    return totalCo2;
+  }
+
+  @Expose()
+  get totalGamePoints(): number {
+    let totalGamePoints = 0;
+    this.courses.forEach(course => {
+      totalGamePoints += course.totalGamePoints;
+    });
+    return totalGamePoints;
+  }
 
 }
