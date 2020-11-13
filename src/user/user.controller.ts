@@ -2,15 +2,13 @@ import { Get, Post, Body, Put, Delete, Param, Controller, UsePipes } from '@nest
 import { ApiBearerAuth, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { UserService } from './user.service';
-import { UserCourseWithChallenges, UserRO, UserWithCourses  } from './user.interface';
+import { UserRO, UserWithCourses  } from './user.interface';
 import { CreateUserDto, UpdateUserDto, LoginUserDto } from './dto';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { User } from './user.decorator';
 import { ValidationPipe } from '../shared/pipes/validation.pipe';
-import { UserEntity } from './user.entity';
 import { ChallengeEntity } from '../challenge/challenge.entity';
-import { CourseEntity } from '../course/course.entity';
-import { ChallengeTemplateEntity } from '../challenge/challengeTemplate.entity';
+
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -18,28 +16,47 @@ import { ChallengeTemplateEntity } from '../challenge/challengeTemplate.entity';
 export class UserController {
 
   constructor(private readonly userService: UserService) {}
-
+  @ApiOperation({ summary: 'get basic user info, no stats' })
+  @ApiResponse({ status: 200, description: 'Returns a user, UserRo .'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Get('user')
   async findMe(@User('email') email: string): Promise<UserRO> {
     return await this.userService.findByEmail(email);
   }
 
+  
+  @ApiOperation({ summary: 'update user' })
+  @ApiResponse({ status: 200, description: 'Returns an update user, UpdateUserDTO.'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Put('user')
   async update(@User('id') userId: number, @Body('user') userData: UpdateUserDto) {
     return await this.userService.update(userId, userData);
   }
 
+
+  @ApiOperation({ summary: 'Create an account with username, email and password, CreateUserDTO' })
+  @ApiResponse({ status: 200, description: 'Return the user with a token.'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @UsePipes(new ValidationPipe())
-  @Post('users')
+  @Post('register')
   async create(@Body('user') userData: CreateUserDto) {
     return this.userService.create(userData);
   }
 
+
+  @ApiOperation({ summary: 'Dealet User Account' })
+  @ApiResponse({ status: 200, description: 'deleted.'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Delete('users/:slug')
   async delete(@Param() params) {
     return await this.userService.delete(params.slug);
   }
+
+
   /***  login user  http://localhost:3000/api/users/login *****/
+  @ApiOperation({ summary: 'User login with email and password' })
+  @ApiResponse({ status: 200, description: 'Return the user with a token.'})
+  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @UsePipes(new ValidationPipe())
   @Post('users/login')
   async login(@Body('user') loginUserDto: LoginUserDto): Promise<UserRO> {
@@ -54,10 +71,11 @@ export class UserController {
     return {user}
   }
 
+
   /*** get all courses associated with a user, use jwt to identify the user  *****/
   /** http://localhost:3000/api/player  **/
-  @ApiOperation({ summary: 'Get course from a user' })
-  @ApiResponse({ status: 200, description: 'Return users parcours.'})
+  @ApiOperation({ summary: 'Get complete use profile with stats, score, courses and challenges, UserWithCourse' })
+  @ApiResponse({ status: 200, description: 'Return users profile with stats.'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Get('player')
   async getUserWithInfo(@User('id') userId: number): Promise<UserWithCourses> {
@@ -75,18 +93,16 @@ export class UserController {
     } 
     return userWithoutPwd
   }
-
   
   /************ Remember that the token will take preference over the id  **************/
   /************ add Course to a user **************/
-  @ApiOperation({ summary: 'Add a course to a user' })
-  @ApiResponse({ status: 200, description: 'course added to user'})
+  @ApiOperation({ summary: 'User Adds a course to her profile ' })
+  @ApiResponse({ status: 200, description: 'course added to user (with all challenges associated with course'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })  
   @Put('user/:userId/course/:courseTemplateId/add')
   async addCourse(@Param('userId') userId: number, @Param('courseTemplateId') courseTemplateId: number): Promise<UserWithCourses> {
     return this.userService.addCourse(userId, courseTemplateId)
   }
-
 
   /************ User Accepts Challenge  **************/
   @ApiOperation({ summary: 'User Accepts challenge' })
@@ -100,7 +116,7 @@ export class UserController {
 
   /************ User Completes Challenge  **************/
   @ApiOperation({ summary: 'User Completes Challenge' })
-  @ApiResponse({ status: 200, description: 'challenge completed by user'})
+  @ApiResponse({ status: 200, description: 'challenge isCompleted becomes true and dated completed'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })  
   @Put('user/challenge/:challengeId/complete')
   async completeChallenge(@Param('challengeId') challengeId: number): Promise< ChallengeEntity> {
