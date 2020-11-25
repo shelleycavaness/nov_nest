@@ -4,19 +4,14 @@ import { Repository, getRepository, DeleteResult } from 'typeorm';
 import { ChallengesRO } from './course.interface'
 import {CourseEntity} from './course.entity';
 import { CourseTemplateEntity } from "./courseTemplate.entity";
-import { ChallengeTemplateEntity } from "../challenge/challengeTemplate.entity";
 
 @Injectable()
 export class CourseService{
   constructor(
     @InjectRepository(CourseTemplateEntity)
-      // private readonly courseRepository: Repository<CourseEntity>,
       private readonly courseTempleteRepository: Repository<CourseTemplateEntity>,
-      // @InjectRepository(ChallengeTemplateEntity)
-      // private readonly courseRepository: Repository<CourseEntity>,
-      // private readonly challengeTempleteRepository: Repository<ChallengeTemplateEntity>,
-    // @InjectRepository(UserEntity)
-    //   private readonly userRepository: Repository<UserEntity>,
+      @InjectRepository(CourseEntity)
+      private readonly courseRepository: Repository<CourseEntity>,
   ) {}
 
 
@@ -26,15 +21,21 @@ export class CourseService{
     return await this.courseTempleteRepository.find();
   }
 
-  async findCourseById(id: number): Promise<{}> {
-    const courseRepository = getRepository(CourseTemplateEntity)
+  //search for a users valid course umber
+  async findUsersCourseById(id: number): Promise<ChallengesRO> {
+    const courseRepository = getRepository(CourseEntity)
     const findChallenges = await courseRepository.findOne({ 
-      relations: ["challengeTemplates"], //from user.entity  -hasActions
+      relations: ["challenges"], //from user.entity  -hasActions
       where: { id: id }
     }); 
-    // console.log('USER_--------------', findChallenges)
+    if(findChallenges == undefined){  console.error('ooops course id not found',findChallenges )}
+    else{
+      // console.log('USER_--------------', findChallenges)
     return findChallenges
+    }
+    
   }
+
   async listAllChallengesFromCourseId(id: number): Promise<{}> {
     const courseRepository = getRepository(CourseTemplateEntity)
     const findChallenges = await courseRepository.findOne({ 
@@ -45,14 +46,14 @@ export class CourseService{
   }
 
   ///***/       not working well undefined       /***//
-  async findChallengeById( courseTemplateId: number, challengeTemplateId: number){
-    const courseRepository = getRepository(CourseTemplateEntity)
-    const findCourse = await courseRepository.findOne({ 
-      relations: ["challengeTemplates"], 
-      where: { id: courseTemplateId,  }
-    }); 
-    console.log('number33333',  findCourse.challengeTemplates)
-    return findCourse.challengeTemplates[challengeTemplateId -1]
-  }
+  // async findChallengeById( courseTemplateId: number, challengeTemplateId: number){
+  //   const courseRepository = getRepository(CourseTemplateEntity)
+  //   const findCourse = await courseRepository.findOne({ 
+  //     relations: ["challengeTemplates"], 
+  //     where: { id: courseTemplateId,  }
+  //   }); 
+  //   console.log('number33333',  findCourse.challengeTemplates)
+  //   return findCourse.challengeTemplates[challengeTemplateId -1]
+  // }
  
 }

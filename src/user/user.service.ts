@@ -10,8 +10,6 @@ import { UserEntity } from './user.entity';
 import { CourseEntity } from '../course/course.entity';
 import {CreateUserDto, LoginUserDto, UpdateUserDto} from './dto';
 import { UserRO, UserWithCourses } from './user.interface';
-
-
 import {CourseTemplateEntity} from '../course/courseTemplate.entity'
 import {ChallengeEntity} from '../challenge/challenge.entity'
 import { ChallengeTemplateEntity } from '../challenge/challengeTemplate.entity';
@@ -49,7 +47,6 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto): Promise<UserRO> {
-
     // check uniqueness of username/email
     const {username, email, password} = dto;
     const qb = await getRepository(UserEntity)
@@ -62,7 +59,6 @@ export class UserService {
     if (user) {
       const errors = {username: 'Username and email must be unique.'};
       throw new HttpException({message: 'Input data validation failed', errors}, HttpStatus.BAD_REQUEST);
-
     }
 
     // create new user
@@ -140,15 +136,14 @@ export class UserService {
   async userWithChallenges(id: number) {
   }
 
-  /************ get all courses belonging to a user's  **************/
-  // async userWithCourses(id: number): Promise<UserWithCourses> {
+  /**** get all courses and stats belonging to a user's  **************/
     async userWithInfo(id: number): Promise<UserWithCourses> {
     const userRepository = getRepository(UserEntity)
     const findUserInfo = await userRepository.findOne({ 
       relations: ["courses", "courses.challenges", "courses.challenges.reward"],
       where: { id: id }
     }); 
-    // console.log('USER_--------------', findUserActions)
+    // 
     return findUserInfo
   }
 
@@ -167,9 +162,17 @@ export class UserService {
     })
     const courseTemplate = courseTemplates[0]
 
-    // TODO: Check if course with same title as courseTemplate is already in user courses
+    // 2.1 Check if course with same title as courseTemplate is already in user courses
     // If so raise an exception (ie throw an error that will be caught in the controller)
-
+    const checkDuplicates = (courseTemplate, user) => {
+       user.courses.forEach(element => {
+        if(courseTemplate.title == element.title){
+          throw new Error('invalid because this course already exists for the user, choose new course')
+          }
+        }); 
+      }
+    checkDuplicates(courseTemplate, user)  
+    
     // 3- Create a course instance with its challenges from template
     const course = new CourseEntity()
     course.title = courseTemplate.title
@@ -179,9 +182,9 @@ export class UserService {
     // 4- Save the course with user
     this.courseRepository.save(course)
 
-    // 5- Iterate through all challengTemplates of the courseTemplate
+    // // 5- Iterate through all challengTemplates of the courseTemplate
     courseTemplate.challengeTemplates.forEach(challengeTemplate => {
-      // 5.1- Create a ChallengeEntity instance from the challengeTemplate
+    //   // 5.1- Create a ChallengeEntity instance from the challengeTemplate
       const newChallenge = new ChallengeEntity()
       newChallenge.title = challengeTemplate.title
       newChallenge.description = challengeTemplate.description
@@ -193,7 +196,7 @@ export class UserService {
       this.challengeRepository.save(newChallenge)
     });
 
-    // 6- Save User
+    // // 6- Save User
     this.userRepository.save(user)
 
     // 7- return user dto

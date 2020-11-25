@@ -20,38 +20,25 @@ export class CourseController {
     return await this.courseService.findAll();
   }
 
-  /**********   get all challenges in a parcours/group************/
-  @ApiOperation({ summary: 'Get all challenges in a group by its id' })
-  @ApiResponse({ status: 200, description: 'Return challenges from group.'})
-  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
-  @Get(':id')
-  async getAllChallengesFromCourse(@Param('id') courseId: number): Promise<{}> {
-  //rework the promose with a interface CourseRO object
-    const group = await this.courseService.findCourseById(courseId)
-    return group
-  }
-
    /**********  display an array of challenges for front************/
-  //  @ApiOperation({ summary: 'Get all challenges in a group by its id' })
-  //  @ApiResponse({ status: 200, description: 'Return challenges from group.'})
-  //  @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
-  //  @Get(':id')
-  //  async getAllChallengesFromCourse(@Param('id') courseId: number): Promise<{}> {
-  //  //rework the promose with a interface CourseRO object
-  //    const group = await this.courseService.findCourseById(courseId)
-  //    return group
-  //  }
+   @ApiOperation({ summary: 'Get all challenges a users course' })
+   @ApiResponse({ status: 200, description: 'Return challenges from group.'})
+   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
+   @Get('course/:id')
+   async getAllChallengesWithCourseId(@Param('id') courseId: number): Promise<{}> {
+   //rework the promose with a interface CourseRO object
+     const group = await this.courseService.findUsersCourseById(courseId)
+     return group
+   }
 //**************get challenge inside a parcours by id *******************//
-  @ApiOperation({ summary: 'find a challenge by id' })
-  @ApiResponse({ status: 200, description: 'get a challenge by id.'})
-  @ApiResponse({ status: 500, description: 'Internal server error' })
-  @Get(':courseTemplateId/course/:challengeTemplateId')
-  async getChallengeById(@Param('courseTemplateId') courseTemplateId: number, @Param('challengeTemplateId') challengeTemplateId: number): Promise<{}> {
-    console.log('courseTemplateId ----', courseTemplateId)
-    console.log('challengeTemplateId =====', challengeTemplateId)
-
-    return await this.courseService.findChallengeById(courseTemplateId, challengeTemplateId);
-  }
+  // @ApiOperation({ summary: 'find a challenge by id' })
+  // @ApiResponse({ status: 200, description: 'get a challenge by id.'})
+  // @ApiResponse({ status: 500, description: 'Internal server error' })
+  // @Get(':courseTemplateId/course/:challengeTemplateId')
+  // async getChallengeById(@Param('courseTemplateId') courseTemplateId: number, 
+  //  @Param('challengeTemplateId') challengeTemplateId: number): Promise<{}> {
+  //   return await this.courseService.findChallengeById(courseTemplateId, challengeTemplateId);
+  // }
 
 
 

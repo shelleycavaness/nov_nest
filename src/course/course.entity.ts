@@ -1,5 +1,5 @@
 import { type } from 'os';
-import {Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, ManyToOne} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from 'typeorm';
 import { Expose } from 'class-transformer'; //
 
 import {ChallengeEntity} from '../challenge/challenge.entity';
