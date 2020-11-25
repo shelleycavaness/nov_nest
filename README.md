@@ -1,7 +1,7 @@
 # ![Node/Express/TypeOrm](girl_idea.png)
 
 
-> ### NestJS codebase containing CRUD, auth, advanced patterns, etc) from [shellyeah](https://shelleycavaness.github.io/shellyeah/).
+> ### NestJS codebase containing CRUD, auth, advanced patterns, etc from [shellyeah](https://shelleycavaness.github.io/shellyeah/).
 
 
 ----------
@@ -12,7 +12,7 @@
 
 Clone the repository
 
-    git clone git@github.com:lujakob/nestjs-realworld-example-app.git
+    git clone https://github.com/shelleycavaness/nov_nest.git
 
 Switch to the repo folder
 
