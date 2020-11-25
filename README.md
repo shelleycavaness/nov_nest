@@ -1,4 +1,4 @@
-# ![Node/Express/TypeOrm](girl_idea.jpeg)
+# ![Node/Express/TypeOrm](girl_idea.jpg)
 
 
 > ### NestJS codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [shellyeah](https://shelleycavaness.github.io/shellyeah/) API spec.
