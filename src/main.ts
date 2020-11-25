@@ -8,8 +8,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const options = new DocumentBuilder()
-    .setTitle('NestJS Realworld Example App')
-    .setDescription('The Realworld API description')
+    .setTitle('NestJS EcoChallenge App')
+    .setDescription('The Eco-Challenge API')
     .setVersion('1.0')
     .setBasePath('api')
     .addBearerAuth()

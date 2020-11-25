@@ -167,12 +167,12 @@ export class UserService {
     const checkDuplicates = (courseTemplate, user) => {
        user.courses.forEach(element => {
         if(courseTemplate.title == element.title){
-          throw Error('invalid because this course already exists for the user, choose new course')
+          throw new Error('invalid because this course already exists for the user, choose new course')
           }
         }); 
       }
     checkDuplicates(courseTemplate, user)  
-
+    
     // 3- Create a course instance with its challenges from template
     const course = new CourseEntity()
     course.title = courseTemplate.title

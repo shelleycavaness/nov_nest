@@ -1,7 +1,7 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn} from 'typeorm';
 import {CourseEntity} from '../course/course.entity'
 import { RewardEntity } from '../reward/reward.entity'
-import { ChallengeTemplateEntity } from './challengeTemplate.entity'
+// import { ChallengeTemplateEntity } from './challengeTemplate.entity'
 
 @Entity('challenge')
 export class ChallengeEntity {
