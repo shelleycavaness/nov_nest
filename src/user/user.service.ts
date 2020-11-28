@@ -143,7 +143,10 @@ export class UserService {
       relations: ["courses", "courses.challenges", "courses.challenges.reward"],
       where: { id: id }
     }); 
-    // 
+    // Error - check to see if user exists
+    if (!findUserInfo) {
+      throw new Error('invalid because the user doesnt exist')
+    }
     return findUserInfo
   }
 
@@ -154,24 +157,32 @@ export class UserService {
       relations: ["courses"],
       where: { id: userId }
     })
+    // Error - check to see if user exists
+    if (!user) {
+      throw new Error('invalid because the user doesnt exist')
+    }
 
     // 2- Get the courseTemplate with challengeTemplates with id
+    //const [courseTemplates] is equal to courseTemplates[0]
     const courseTemplates = await this.courseTemplateRepository.find({
-    relations: ["challengeTemplates", "challengeTemplates.reward"],
+      relations: ["challengeTemplates", "challengeTemplates.reward"],
       where: { id: courseTemplateId }
     })
     const courseTemplate = courseTemplates[0]
 
+   //Error-   Check to see if course Template exists
+    if (!courseTemplate) {
+      throw new Error('invalid because the courseTemplate doesnt exist')
+    }
+
     // 2.1 Check if course with same title as courseTemplate is already in user courses
     // If so raise an exception (ie throw an error that will be caught in the controller)
-    const checkDuplicates = (courseTemplate, user) => {
-       user.courses.forEach(element => {
-        if(courseTemplate.title == element.title){
-          throw new Error('invalid because this course already exists for the user, choose new course')
-          }
-        }); 
+    user.courses.forEach(element => {
+      if(courseTemplate.title == element.title){
+        throw new Error('invalid because this course already exists for the user, choose new course')
       }
-    checkDuplicates(courseTemplate, user)  
+    }); 
+
     
     // 3- Create a course instance with its challenges from template
     const course = new CourseEntity()
@@ -237,7 +248,10 @@ export class UserService {
   // Complete Challenge
   async completeChallenge(challengeId: number): Promise <ChallengeEntity>{
     // 1- Get user's challenge from id
-    const challenge = await this.challengeRepository.findOne(challengeId)
+    const challenge = await this.challengeRepository.findOne({
+      relations: ['course'],
+      where: { id: challengeId }
+    })
 
     if (!challenge) {
       throw Error("challenge is null!")
@@ -251,6 +265,21 @@ export class UserService {
 
     // 4- Save
     this.challengeRepository.save(challenge)
+
+
+    //  import the course from DB to reset the course properties
+    //  the course entity needs accest to the challenges
+    //  what are you retriveing from db and the relationship
+    const challengeCourse = await this.courseRepository.findOne({
+      relations: ['challenges'],
+      where: { id: challenge.course.id }
+    })
+
+    // TODO: check if all challenges in course are completed
+    if (challengeCourse.checkIsCompleted()) {
+      this.courseRepository.update(challengeCourse.id, { isCompleted: true })
+      challenge.course.isCompleted = true
+    }
 
     // 5- Return challenge dto
     return challenge

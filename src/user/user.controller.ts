@@ -1,4 +1,4 @@
-import { Get, Post, Body, Put, Delete, Param, Controller, UsePipes } from '@nestjs/common';
+import { Get, Post, Body, Put, Delete, Param, Controller, UsePipes, BadRequestException } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { UserService } from './user.service';
@@ -33,7 +33,7 @@ export class UserController {
     return await this.userService.update(userId, userData);
   }
 
-
+  /**   "user" : {"username", "email", "password" }**/
   @ApiOperation({ summary: 'Create an account with username, email and password, CreateUserDTO' })
   @ApiResponse({ status: 200, description: 'Return the user with a token.'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
@@ -52,7 +52,7 @@ export class UserController {
     return await this.userService.delete(params.slug);
   }
 
-
+  /**   **/
   /***  login user  http://localhost:3000/api/users/login *****/
   @ApiOperation({ summary: 'User login with email and password' })
   @ApiResponse({ status: 200, description: 'Return the user with a token.'})
@@ -79,19 +79,23 @@ export class UserController {
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })
   @Get('player')
   async getUserWithInfo(@User('id') userId: number): Promise<UserWithCourses> {
-    const userWithChal = await this.userService.userWithInfo(userId)
-    const userWithoutPwd = {
-      id: userWithChal.id,
-      username: userWithChal.username,
-      email: userWithChal.email,
-      image: userWithChal.image,
-      totalGamePoints: userWithChal.totalGamePoints,
-      totalKw: userWithChal.totalKw,
-      totalH2O: userWithChal.totalH2O,
-      totalCo2: userWithChal.totalCo2,
-      courses: userWithChal.courses
-    } 
-    return userWithoutPwd
+    try {
+      const userWithChal = await this.userService.userWithInfo(userId)
+      const userWithoutPwd = {
+        id: userWithChal.id,
+        username: userWithChal.username,
+        email: userWithChal.email,
+        image: userWithChal.image,
+        totalGamePoints: userWithChal.totalGamePoints,
+        totalKw: userWithChal.totalKw,
+        totalH2O: userWithChal.totalH2O,
+        totalCo2: userWithChal.totalCo2,
+        courses: userWithChal.courses
+      } 
+      return userWithoutPwd
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
   
   /************ Remember that the token will take preference over the id  **************/
@@ -101,7 +105,11 @@ export class UserController {
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })  
   @Put('user/:userId/course/:courseTemplateId/add')
   async addCourse(@Param('userId') userId: number, @Param('courseTemplateId') courseTemplateId: number): Promise<UserWithCourses> {
-    return this.userService.addCourse(userId, courseTemplateId)
+    try {
+      return await this.userService.addCourse(userId, courseTemplateId)
+    } catch (error) {
+      throw new BadRequestException(error.message)
+    }
   }
 
   /************ User Accepts Challenge  **************/

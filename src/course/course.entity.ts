@@ -71,6 +71,17 @@ export class CourseEntity {
     });
     return totalGamePoints;
   }
-
+  //method on the class to see if the course is completed
+  //only the course itself need to know that it is completed
+  checkIsCompleted(): Boolean {
+    if (!this.isCompleted) {
+      this.challenges.forEach(challenge => {
+        if (!challenge.isCompleted) {
+          return false
+        }
+      })
+    }
+    return true
+  }
 
 }
