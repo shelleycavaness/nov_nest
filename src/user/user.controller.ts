@@ -60,6 +60,7 @@ export class UserController {
   @UsePipes(new ValidationPipe())
   @Post('users/login')
   async login(@Body('user') loginUserDto: LoginUserDto): Promise<UserRO> {
+
     const _user = await this.userService.findOne(loginUserDto);
 
     const errors = {User: ' not found'};
@@ -98,8 +99,9 @@ export class UserController {
     }
   }
   
-  /************ Remember that the token will take preference over the id  **************/
-  /************ add Course to a user **************/
+  /********  add Course to a user **************/
+  /***** Remember that the token will take preference over the id *********/
+  /******** and break it if ther is a confict between the two! *******/
   @ApiOperation({ summary: 'User Adds a course to her profile ' })
   @ApiResponse({ status: 200, description: 'course added to user (with all challenges associated with course'})
   @ApiResponse({ status: 403, description: 'Forbidden invalid token.' })  

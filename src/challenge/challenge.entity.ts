@@ -14,6 +14,9 @@ export class ChallengeEntity {
   @Column({default: ''})
   description: string;
 
+  @Column({default: ''})
+  image: string;
+
   @Column({ default: false })
   isCompleted: boolean
 

@@ -163,12 +163,12 @@ export class UserService {
     }
 
     // 2- Get the courseTemplate with challengeTemplates with id
-    //const [courseTemplates] is equal to courseTemplates[0]
     const courseTemplates = await this.courseTemplateRepository.find({
       relations: ["challengeTemplates", "challengeTemplates.reward"],
       where: { id: courseTemplateId }
     })
     const courseTemplate = courseTemplates[0]
+    //const [courseTemplates] is equal to courseTemplates[0]
 
    //Error-   Check to see if course Template exists
     if (!courseTemplate) {
@@ -182,7 +182,6 @@ export class UserService {
         throw new Error('invalid because this course already exists for the user, choose new course')
       }
     }); 
-
     
     // 3- Create a course instance with its challenges from template
     const course = new CourseEntity()
@@ -190,15 +189,18 @@ export class UserService {
     course.isCompleted = false
     course.challenges = []
     course.user = user   // adds the user to course
+
     // 4- Save the course with user
     this.courseRepository.save(course)
 
-    // // 5- Iterate through all challengTemplates of the courseTemplate
+    // 5- Iterate through all challengTemplates of the courseTemplate
     courseTemplate.challengeTemplates.forEach(challengeTemplate => {
-    //   // 5.1- Create a ChallengeEntity instance from the challengeTemplate
+    //  5.1- Create a ChallengeEntity instance from the challengeTemplate
       const newChallenge = new ChallengeEntity()
       newChallenge.title = challengeTemplate.title
       newChallenge.description = challengeTemplate.description
+      newChallenge.image = challengeTemplate.image
+
       newChallenge.isCompleted = false
       newChallenge.reward = challengeTemplate.reward
       // 5.2- Link the course to the challenge

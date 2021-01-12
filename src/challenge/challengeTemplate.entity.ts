@@ -14,6 +14,9 @@ export abstract class ChallengeTemplateEntity {
   @Column({default: ''})
   description: string;
 
+  @Column({default: ''})
+  image: string;
+
 
   @ManyToMany(() => CourseTemplateEntity, courseTemplate => courseTemplate.challengeTemplates)
   @JoinTable()
