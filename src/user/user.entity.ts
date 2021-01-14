@@ -17,7 +17,7 @@ export class UserEntity {
   @IsEmail()
   email: string;
 
-  @Column({default: ''})
+  @Column({default: 'https://images.unsplash.com/photo-1523626797181-8c5ae80d40c2?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NXx8cHVnJTIwZG9nfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'})
   image: string;
 
   @Column()
